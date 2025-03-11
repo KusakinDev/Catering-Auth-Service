@@ -12,10 +12,12 @@ package main
 import (
 	"log"
 
-	routespkg "github.com/GIT_USER_ID/GIT_REPO_ID/internal/routes"
+	loggerconfig "github.com/KusakinDev/Catering-Auth-Service/internal/config/logger"
+	routespkg "github.com/KusakinDev/Catering-Auth-Service/internal/routes"
 )
 
 func main() {
+	loggerconfig.Init()
 	routes := routespkg.ApiHandleFunctions{}
 
 	log.Printf("Server started")

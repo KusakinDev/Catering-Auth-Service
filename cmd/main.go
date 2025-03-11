@@ -12,18 +12,15 @@ package main
 import (
 	"log"
 
-	// WARNING!
-	// Pass --git-repo-id and --git-user-id properties when generating the code
-	//
-	sw "github.com/GIT_USER_ID/GIT_REPO_ID/go"
+	routespkg "github.com/GIT_USER_ID/GIT_REPO_ID/internal/routes"
 )
 
 func main() {
-	routes := sw.ApiHandleFunctions{}
+	routes := routespkg.ApiHandleFunctions{}
 
 	log.Printf("Server started")
 
-	router := sw.NewRouter(routes)
+	router := routespkg.NewRouter(routes)
 
 	log.Fatal(router.Run(":8080"))
 }

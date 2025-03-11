@@ -72,11 +72,41 @@ func (user *UserAccount) DecodeFromContext(c *gin.Context) error {
 	return nil
 }
 
-func (user *UserAccount) AddToTable(db *database.DataBase) error {
+// Create new row in user's account
+func (user *UserAccount) AddToTable(db *database.DataBase) int {
+
+	userFind := &UserAccount{}
+	userFind.Username = user.Username
+
+	logrus.Println("user ", user)
+	logrus.Println("userFind ", userFind)
+
+	errFind := userFind.getFromTableByName(db)
+
+	if errFind == nil {
+		logrus.Println("userFind ", userFind)
+		return 409
+	}
+
+	err := db.Connection.Create(&user).Error
+	if err != nil {
+		return 503
+	}
+	return 0
+}
+
+// Get user from table by username
+func (user *UserAccount) getFromTableByName(db *database.DataBase) error {
+
+	err := db.Connection.Where("username = ?", user.Username).First(&user).Error
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-// Get user from table by id or username
+// Get user from table by id
 func (user *UserAccount) GetFromTable(db *database.DataBase) error {
 
 	err := db.Connection.First(&user).Error

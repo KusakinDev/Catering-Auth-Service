@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/KusakinDev/Catering-Auth-Service/internal/database"
 	"github.com/KusakinDev/Catering-Auth-Service/internal/handlers/login"
+	"github.com/KusakinDev/Catering-Auth-Service/internal/handlers/registration"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,9 +13,17 @@ type DefaultAPI struct {
 
 // Post /register
 // New user's registration
-func (api *DefaultAPI) RegisterPost(c *gin.Context) {
-	// Your handler implementation
-	c.JSON(200, gin.H{"status": "OK"})
+func (api *DefaultAPI) Register(c *gin.Context) {
+
+	err := api.db.InitDB()
+	if err != nil {
+		c.JSON(503, gin.H{"Error": "Service Unavailable"})
+	}
+	defer api.db.CloseDB()
+
+	code, message := registration.RegistrationHandle(&api.db, c)
+
+	c.JSON(code, gin.H{"message": message})
 }
 
 // Post /login

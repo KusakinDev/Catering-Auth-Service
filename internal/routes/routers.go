@@ -76,7 +76,7 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			"RegisterPost",
 			http.MethodPost,
 			"/register",
-			handleFunctions.DefaultAPI.RegisterPost,
+			handleFunctions.DefaultAPI.Register,
 		},
 	}
 }

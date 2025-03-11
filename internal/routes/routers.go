@@ -70,7 +70,7 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			"RefreshTokenPost",
 			http.MethodPost,
 			"/refresh-token",
-			handleFunctions.DefaultAPI.RefreshTokenPost,
+			handleFunctions.DefaultAPI.RefreshToken,
 		},
 		{
 			"RegisterPost",

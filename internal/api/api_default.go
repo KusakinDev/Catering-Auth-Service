@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/KusakinDev/Catering-Auth-Service/internal/database"
 	"github.com/KusakinDev/Catering-Auth-Service/internal/handlers/login"
+	refreshtoken "github.com/KusakinDev/Catering-Auth-Service/internal/handlers/refreshToken"
 	"github.com/KusakinDev/Catering-Auth-Service/internal/handlers/registration"
 	"github.com/gin-gonic/gin"
 )
@@ -36,15 +37,16 @@ func (api *DefaultAPI) Login(c *gin.Context) {
 	}
 	defer api.db.CloseDB()
 
-	code, message := login.LoginHandle(&api.db, c)
+	code, accessToken, refreshToken, message := login.LoginHandle(&api.db, c)
 
-	c.JSON(code, gin.H{"message": message})
+	c.JSON(code, gin.H{"accessToken": accessToken, "refreshToken": refreshToken, "message": message})
 
 }
 
 // Post /refresh-token
 // Refresh access token
-func (api *DefaultAPI) RefreshTokenPost(c *gin.Context) {
-	// Your handler implementation
-	c.JSON(200, gin.H{"status": "OK"})
+func (api *DefaultAPI) RefreshToken(c *gin.Context) {
+
+	code, accessToken, refreshToken, message := refreshtoken.RefreshToken(c)
+	c.JSON(code, gin.H{"accessToken": accessToken, "refreshToken": refreshToken, "message": message})
 }

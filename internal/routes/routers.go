@@ -3,7 +3,7 @@ package routespkg
 import (
 	"net/http"
 
-	api "github.com/GIT_USER_ID/GIT_REPO_ID/internal"
+	api "github.com/KusakinDev/Catering-Auth-Service/internal/api"
 	"github.com/gin-gonic/gin"
 )
 
@@ -64,7 +64,7 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			"LoginPost",
 			http.MethodPost,
 			"/login",
-			handleFunctions.DefaultAPI.LoginPost,
+			handleFunctions.DefaultAPI.Login,
 		},
 		{
 			"RefreshTokenPost",

@@ -2,7 +2,7 @@ package changepassword
 
 import (
 	"github.com/KusakinDev/Catering-Auth-Service/internal/database"
-	changepasswordform "github.com/KusakinDev/Catering-Auth-Service/internal/models/ChangePasswordForm"
+	changepasswordform "github.com/KusakinDev/Catering-Auth-Service/internal/models/change_password_form"
 	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/user"
 	"github.com/KusakinDev/Catering-Auth-Service/internal/utils/jwt"
 	"github.com/gin-gonic/gin"

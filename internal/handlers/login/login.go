@@ -11,6 +11,8 @@ import (
 // User's login
 func LoginHandle(db *database.DataBase, c *gin.Context) (int, string, string, string) {
 
+	db.Migration()
+
 	var userFront useraccount.UserAccount
 	var userDB useraccount.UserAccount
 

@@ -2,45 +2,48 @@ package resetpassword
 
 import (
 	"github.com/KusakinDev/Catering-Auth-Service/internal/database"
+	resetpasswordcode "github.com/KusakinDev/Catering-Auth-Service/internal/models/reset_password_code"
 	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/user"
-	"github.com/KusakinDev/Catering-Auth-Service/internal/utils/jwt"
+	"github.com/KusakinDev/Catering-Auth-Service/internal/utils/email"
 	"github.com/gin-gonic/gin"
 	logger "github.com/sirupsen/logrus"
 )
 
-// User's login
-func LoginHandle(db *database.DataBase, c *gin.Context) (int, string, string, string) {
+// User's reset password
+func ResetPasswordHandle(db *database.DataBase, c *gin.Context) (int, string) {
 
 	var userFront useraccount.UserAccount
 	var userDB useraccount.UserAccount
+	var err error
 
 	userFront.DecodeFromContext(c)
-	userFront.SetPasswordHash(userFront.Password)
-
 	userDB.Username = userFront.Username
 
-	err := userDB.GetFromTable(db)
+	err = userDB.GetFromTableByName(db)
 	if err != nil {
 		logger.Errorln("Incorrect login")
-		return 403, "", "", "Incorrect login or password"
+		return 403, "Incorrect login or email"
 	}
 
-	if userDB.Password != userFront.Password {
-		logger.Errorln("Incorrect password")
-		return 403, "", "", "Incorrect login or password"
+	if userDB.Email != userFront.Email {
+		logger.Errorln("Incorrect email")
+		return 403, "Incorrect login or email"
 	}
 
-	codeA, accessToken, errAT := jwt.GenerateAccessToken(userDB)
-	if codeA != 200 {
-		return codeA, "", "", errAT
+	var resetForm resetpasswordcode.ResetCode
+
+	resetForm.GenerateCode()
+	resetForm.InitDate(5)
+
+	err = email.SendEmail(userDB.Email, userDB.Username, resetForm.Code)
+	if err != nil {
+		return 503, "Error send email"
 	}
 
-	codeR, refreshToken, errRT := jwt.GenerateRefreshToken(userDB)
-	if codeR != 200 {
-		return codeR, "", "", errRT
-	}
+	resetForm.AddToTable(db)
 
-	logger.Infoln("Authorization is successful. User: ", userDB.Id, userDB.Username)
+	logger.Infoln("Send reset email is successful. User: ", userDB.Id, userDB.Username,
+		" EMAIL: ", userDB.Email, "code: ", resetForm.Code, "time: ", resetForm.StartTime, " ", resetForm.ExpTime)
 
-	return 200, accessToken, refreshToken, "Authorization is successful"
+	return 200, "Send reset email is successful"
 }

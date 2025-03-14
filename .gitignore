@@ -19,7 +19,7 @@ obj/
 *.prof
 *.trace
 
-
+.env/
 *.env
 .env.local
 

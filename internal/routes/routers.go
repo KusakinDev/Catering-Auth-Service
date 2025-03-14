@@ -84,5 +84,11 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			"/change-password",
 			handleFunctions.DefaultAPI.ChangePassword,
 		},
+		{
+			"ResetPasswordPost",
+			http.MethodPost,
+			"/reset-password",
+			handleFunctions.DefaultAPI.ResetPassword,
+		},
 	}
 }

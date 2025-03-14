@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func RefreshToken(c *gin.Context) (int, string, string, string) {
+func RefreshTokenHandle(c *gin.Context) (int, string, string, string) {
 
 	var reqBody struct {
 		RefreshToken string `json:"refresh_token"`

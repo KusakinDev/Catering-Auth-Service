@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/KusakinDev/Catering-Auth-Service/internal/database"
+	changepassword "github.com/KusakinDev/Catering-Auth-Service/internal/handlers/change_password"
 	"github.com/KusakinDev/Catering-Auth-Service/internal/handlers/login"
 	refreshtoken "github.com/KusakinDev/Catering-Auth-Service/internal/handlers/refreshToken"
 	"github.com/KusakinDev/Catering-Auth-Service/internal/handlers/registration"
@@ -47,6 +48,30 @@ func (api *DefaultAPI) Login(c *gin.Context) {
 // Refresh access token
 func (api *DefaultAPI) RefreshToken(c *gin.Context) {
 
-	code, accessToken, refreshToken, message := refreshtoken.RefreshToken(c)
+	code, accessToken, refreshToken, message := refreshtoken.RefreshTokenHandle(c)
+	c.JSON(code, gin.H{"accessToken": accessToken, "refreshToken": refreshToken, "message": message})
+}
+
+// Post /reset-password
+// Reset user's password
+func (api *DefaultAPI) ResetPassword(c *gin.Context) {
+
+	//code, accessToken, refreshToken, message := refreshtoken.RefreshToken(c)
+
+	//c.JSON(code, gin.H{"accessToken": accessToken, "refreshToken": refreshToken, "message": message})
+}
+
+// Post /change-password
+// Change user's password
+func (api *DefaultAPI) ChangePassword(c *gin.Context) {
+
+	err := api.db.InitDB()
+	if err != nil {
+		c.JSON(503, gin.H{"Error": "Service Unavailable"})
+	}
+	defer api.db.CloseDB()
+
+	code, accessToken, refreshToken, message := changepassword.ChangePasswordHandle(&api.db, c)
+
 	c.JSON(code, gin.H{"accessToken": accessToken, "refreshToken": refreshToken, "message": message})
 }

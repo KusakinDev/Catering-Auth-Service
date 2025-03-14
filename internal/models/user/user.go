@@ -44,7 +44,7 @@ func (user *UserAccount) AddToTable(db *database.DataBase) int {
 	userFind := &UserAccount{}
 	userFind.Username = user.Username
 
-	errFind := userFind.getFromTableByName(db)
+	errFind := userFind.GetFromTableByName(db)
 
 	if errFind == nil {
 		logrus.Println("userFind ", userFind)
@@ -59,7 +59,7 @@ func (user *UserAccount) AddToTable(db *database.DataBase) int {
 }
 
 // Get user from table by username
-func (user *UserAccount) getFromTableByName(db *database.DataBase) error {
+func (user *UserAccount) GetFromTableByName(db *database.DataBase) error {
 
 	err := db.Connection.Where("username = ?", user.Username).First(&user).Error
 	if err != nil {
@@ -73,6 +73,17 @@ func (user *UserAccount) getFromTableByName(db *database.DataBase) error {
 func (user *UserAccount) GetFromTable(db *database.DataBase) error {
 
 	err := db.Connection.First(&user).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Update user in table by id
+func (user *UserAccount) UpdateInTable(db *database.DataBase) error {
+
+	err := db.Connection.Save(&user).Error
 	if err != nil {
 		return err
 	}

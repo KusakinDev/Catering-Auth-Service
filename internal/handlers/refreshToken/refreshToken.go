@@ -38,7 +38,7 @@ func RefreshToken(c *gin.Context) (int, string, string, string) {
 	}
 
 	var user useraccount.UserAccount
-	user.SetId(int(userID))
+	user.Id = int(userID)
 	codeA, accessToken, errAT := jwtt.GenerateAccessToken(user)
 	if codeA != 200 {
 		return codeA, "", "", errAT

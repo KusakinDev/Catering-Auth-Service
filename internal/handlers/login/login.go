@@ -15,9 +15,9 @@ func LoginHandle(db *database.DataBase, c *gin.Context) (int, string, string, st
 	var userDB useraccount.UserAccount
 
 	userFront.DecodeFromContext(c)
-	userFront.SetPassword(userFront.GetPassword())
+	userFront.SetPasswordHash(userFront.Password)
 
-	userDB.SetUsername(userFront.GetUsername())
+	userDB.Username = userFront.Username
 
 	err := userDB.GetFromTable(db)
 	if err != nil {
@@ -25,7 +25,7 @@ func LoginHandle(db *database.DataBase, c *gin.Context) (int, string, string, st
 		return 403, "", "", "Incorrect login or password"
 	}
 
-	if userDB.GetPassword() != userFront.GetPassword() {
+	if userDB.Password != userFront.Password {
 		logger.Errorln("Incorrect password")
 		return 403, "", "", "Incorrect login or password"
 	}
@@ -40,7 +40,7 @@ func LoginHandle(db *database.DataBase, c *gin.Context) (int, string, string, st
 		return codeR, "", "", errRT
 	}
 
-	logger.Infoln("Authorization is successful. User: ", userDB.Id, userDB.GetUsername())
+	logger.Infoln("Authorization is successful. User: ", userDB.Id, userDB.Username)
 
 	return 200, accessToken, refreshToken, "Authorization is successful"
 }

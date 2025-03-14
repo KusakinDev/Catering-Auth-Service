@@ -20,32 +20,8 @@ type UserAccount struct {
 	Password string `gorm:"type:varchar(100)"`
 }
 
-// Get user's Id
-func (user *UserAccount) GetId() int {
-	return user.Id
-}
-
-// Set user's Id
-func (user *UserAccount) SetId(idIN int) {
-	user.Id = idIN
-}
-
-// Get user's username
-func (user *UserAccount) GetUsername() string {
-	return user.Username
-}
-
-// Set user's username
-func (user *UserAccount) SetUsername(usernameIN string) {
-	user.Username = usernameIN
-}
-
-// Get user's password as hash
-func (user *UserAccount) GetPassword() string {
-	return user.Password
-}
-
-func (user *UserAccount) SetPassword(passwordIN string) {
+// Set password as hash
+func (user *UserAccount) SetPasswordHash(passwordIN string) {
 	hasher := sha256.New()
 	hasher.Write([]byte(passwordIN))
 	hashedPassword := hex.EncodeToString(hasher.Sum(nil))
@@ -54,21 +30,11 @@ func (user *UserAccount) SetPassword(passwordIN string) {
 
 // Decode struct from json gin context
 func (user *UserAccount) DecodeFromContext(c *gin.Context) error {
-	var temp struct {
-		ID       int    `json:"id"`
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
 
-	if err := c.ShouldBindJSON(&temp); err != nil {
+	if err := c.ShouldBindJSON(&user); err != nil {
 		logrus.Error("Error decode JSON: ", err)
 		return err
 	}
-
-	user.Id = temp.ID
-	user.Username = temp.Username
-	user.Password = temp.Password
-
 	return nil
 }
 
@@ -77,9 +43,6 @@ func (user *UserAccount) AddToTable(db *database.DataBase) int {
 
 	userFind := &UserAccount{}
 	userFind.Username = user.Username
-
-	logrus.Println("user ", user)
-	logrus.Println("userFind ", userFind)
 
 	errFind := userFind.getFromTableByName(db)
 

@@ -13,9 +13,7 @@ func RegistrationHandle(db *database.DataBase, c *gin.Context) (int, string) {
 	var user useraccount.UserAccount
 
 	user.DecodeFromContext(c)
-	user.SetPassword(user.GetPassword())
-
-	user.SetUsername(user.GetUsername())
+	user.SetPasswordHash(user.Password)
 
 	if user.Username == "" || user.Password == "" {
 		logger.Errorln("Field is empty")
@@ -28,7 +26,7 @@ func RegistrationHandle(db *database.DataBase, c *gin.Context) (int, string) {
 		return 400, "With user is already exist"
 	}
 
-	logger.Infoln("Registration of new user is successful. User: ", user.Id, user.GetUsername())
+	logger.Infoln("Registration of new user is successful. User: ", user.Id, user.Username)
 	return 200, "Registration of new user is successful"
 
 }

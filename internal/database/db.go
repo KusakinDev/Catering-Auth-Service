@@ -54,3 +54,7 @@ func (db *DataBase) Save(value interface{}) error {
 func (db *DataBase) Find(out interface{}, where ...interface{}) error {
 	return db.Connection.Find(out, where...).Error
 }
+
+func (db *DataBase) Delete(value interface{}, where ...interface{}) error {
+	return db.Connection.Delete(value, where...).Error
+}

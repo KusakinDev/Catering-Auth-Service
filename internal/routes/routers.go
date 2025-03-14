@@ -90,5 +90,11 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			"/reset-password",
 			handleFunctions.DefaultAPI.ResetPassword,
 		},
+		{
+			"VerefyResetCodePost",
+			http.MethodPost,
+			"/verefy-reset-code",
+			handleFunctions.DefaultAPI.VerefyRecetCode,
+		},
 	}
 }

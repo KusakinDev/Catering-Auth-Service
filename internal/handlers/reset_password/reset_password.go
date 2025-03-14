@@ -6,7 +6,7 @@ import (
 	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/user"
 	"github.com/KusakinDev/Catering-Auth-Service/internal/utils/email"
 	"github.com/gin-gonic/gin"
-	logger "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // User's reset password
@@ -21,12 +21,12 @@ func ResetPasswordHandle(db *database.DataBase, c *gin.Context) (int, string) {
 
 	err = userDB.GetFromTableByName(db)
 	if err != nil {
-		logger.Errorln("Incorrect login")
+		logrus.Errorln("Incorrect login")
 		return 403, "Incorrect login or email"
 	}
 
 	if userDB.Email != userFront.Email {
-		logger.Errorln("Incorrect email")
+		logrus.Errorln("Incorrect email")
 		return 403, "Incorrect login or email"
 	}
 
@@ -40,9 +40,10 @@ func ResetPasswordHandle(db *database.DataBase, c *gin.Context) (int, string) {
 		return 503, "Error send email"
 	}
 
+	resetForm.User = userDB
 	resetForm.AddToTable(db)
 
-	logger.Infoln("Send reset email is successful. User: ", userDB.Id, userDB.Username,
+	logrus.Infoln("Send reset email is successful. User: ", userDB.Id, userDB.Username,
 		" EMAIL: ", userDB.Email, "code: ", resetForm.Code, "time: ", resetForm.StartTime, " ", resetForm.ExpTime)
 
 	return 200, "Send reset email is successful"

@@ -21,6 +21,19 @@ func (role *Role) DecodeFromContext(c *gin.Context) error {
 	return nil
 }
 
+func (role *Role) GetAllRoles() ([]Role, error) {
+	var db database.DataBase
+	db.InitDB()
+	defer db.CloseDB()
+
+	var roles []Role
+	err := db.Connection.Find(&roles).Error
+	if err != nil {
+		return nil, err
+	}
+	return roles, nil
+}
+
 func (role *Role) MigrateToDB(db database.DataBase) error {
 	err := db.Connection.AutoMigrate(&Role{})
 	if err != nil {

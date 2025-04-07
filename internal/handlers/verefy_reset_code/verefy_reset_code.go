@@ -1,15 +1,14 @@
 package verefyresetcode
 
 import (
-	"github.com/KusakinDev/Catering-Auth-Service/internal/database"
-	resetpasswordcode "github.com/KusakinDev/Catering-Auth-Service/internal/models/reset_password_code"
-	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/user"
+	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/account_model"
+	resetpasswordcode "github.com/KusakinDev/Catering-Auth-Service/internal/models/reset_password_model"
 	"github.com/KusakinDev/Catering-Auth-Service/internal/utils/jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
-func VerefyResetCodeHandle(db *database.DataBase, c *gin.Context) (int, string, string, string) {
+func VerefyResetCodeHandle(c *gin.Context) (int, string, string, string) {
 
 	var resetFormFront resetpasswordcode.ResetCode
 	var resetFormDB resetpasswordcode.ResetCode
@@ -19,14 +18,14 @@ func VerefyResetCodeHandle(db *database.DataBase, c *gin.Context) (int, string, 
 	resetFormFront.DecodeFromContext(c)
 	user = resetFormFront.User
 
-	err = user.GetFromTableByName(db)
+	err = user.GetFromTableByEmail()
 	if err != nil {
 		return 404, "", "", "User not found"
 	}
 
 	resetFormDB.Id_user = user.Id
 
-	err = resetFormDB.GetFromTableByUserId(db)
+	err = resetFormDB.GetFromTableByUserId()
 	if err != nil {
 		logrus.Errorln("No reset request")
 		return 400, "", "", "No reset request"
@@ -52,7 +51,7 @@ func VerefyResetCodeHandle(db *database.DataBase, c *gin.Context) (int, string, 
 		return codeR, "", "", errRT
 	}
 
-	resetFormDB.DeleteFromTableByCode(db)
+	resetFormDB.DeleteFromTableByCode()
 
 	return 200, accessToken, refreshToken, "Reset password is success"
 

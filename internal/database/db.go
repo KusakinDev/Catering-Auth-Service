@@ -3,8 +3,6 @@ package database
 import (
 	"log"
 
-	resetpasswordcode "github.com/KusakinDev/Catering-Auth-Service/internal/models/reset_password_code"
-	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/user"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -32,29 +30,4 @@ func (database *DataBase) CloseDB() error {
 	}
 	sqlDB.Close()
 	return nil
-}
-
-func (database *DataBase) Migration() {
-	database.Connection.AutoMigrate(&useraccount.UserAccount{})
-	database.Connection.AutoMigrate(&resetpasswordcode.ResetCode{})
-}
-
-func (db *DataBase) Create(value interface{}) error {
-	return db.Connection.Create(value).Error
-}
-
-func (db *DataBase) First(out interface{}, where ...interface{}) error {
-	return db.Connection.First(out, where...).Error
-}
-
-func (db *DataBase) Save(value interface{}) error {
-	return db.Connection.Save(value).Error
-}
-
-func (db *DataBase) Find(out interface{}, where ...interface{}) error {
-	return db.Connection.Find(out, where...).Error
-}
-
-func (db *DataBase) Delete(value interface{}, where ...interface{}) error {
-	return db.Connection.Delete(value, where...).Error
 }

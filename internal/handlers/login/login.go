@@ -1,27 +1,23 @@
 package login
 
 import (
-	"github.com/KusakinDev/Catering-Auth-Service/internal/database"
-	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/user"
+	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/account_model"
 	"github.com/KusakinDev/Catering-Auth-Service/internal/utils/jwt"
 	"github.com/gin-gonic/gin"
 	logger "github.com/sirupsen/logrus"
 )
 
 // User's login
-func LoginHandle(db *database.DataBase, c *gin.Context) (int, string, string, string) {
-
-	db.Migration()
-
+func LoginHandle(c *gin.Context) (int, string, string, string) {
 	var userFront useraccount.UserAccount
 	var userDB useraccount.UserAccount
 
 	userFront.DecodeFromContext(c)
 	userFront.SetPasswordHash(userFront.Password)
 
-	userDB.Username = userFront.Username
+	userDB.Email = userFront.Email
 
-	err := userDB.GetFromTable(db)
+	err := userDB.GetFromTable()
 	if err != nil {
 		logger.Errorln("Incorrect login")
 		return 403, "", "", "Incorrect login or password"
@@ -42,7 +38,7 @@ func LoginHandle(db *database.DataBase, c *gin.Context) (int, string, string, st
 		return codeR, "", "", errRT
 	}
 
-	logger.Infoln("Authorization is successful. User: ", userDB.Id, userDB.Username)
+	logger.Infoln("Authorization is successful. User: ", userDB.Id, userDB.Email)
 
 	return 200, accessToken, refreshToken, "Authorization is successful"
 }

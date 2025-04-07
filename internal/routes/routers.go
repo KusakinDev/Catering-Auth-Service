@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	api "github.com/KusakinDev/Catering-Auth-Service/internal/api"
+	authmiddlewares "github.com/KusakinDev/Catering-Auth-Service/internal/middlewares/auth_middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,21 +27,28 @@ func NewRouter(handleFunctions ApiHandleFunctions) *gin.Engine {
 
 // NewRouter add routes to existing gin engine.
 func NewRouterWithGinEngine(router *gin.Engine, handleFunctions ApiHandleFunctions) *gin.Engine {
+	protected := router.Group("/")
+	protected.Use(authmiddlewares.AuthMiddleware())
 	for _, route := range getRoutes(handleFunctions) {
 		if route.HandlerFunc == nil {
 			route.HandlerFunc = DefaultHandleFunc
 		}
-		switch route.Method {
-		case http.MethodGet:
-			router.GET(route.Pattern, route.HandlerFunc)
-		case http.MethodPost:
-			router.POST(route.Pattern, route.HandlerFunc)
-		case http.MethodPut:
-			router.PUT(route.Pattern, route.HandlerFunc)
-		case http.MethodPatch:
-			router.PATCH(route.Pattern, route.HandlerFunc)
-		case http.MethodDelete:
-			router.DELETE(route.Pattern, route.HandlerFunc)
+		switch route.Name {
+		case "GetAllRolesGet":
+			protected.GET(route.Pattern, route.HandlerFunc)
+		default:
+			switch route.Method {
+			case http.MethodGet:
+				router.GET(route.Pattern, route.HandlerFunc)
+			case http.MethodPost:
+				router.POST(route.Pattern, route.HandlerFunc)
+			case http.MethodPut:
+				router.PUT(route.Pattern, route.HandlerFunc)
+			case http.MethodPatch:
+				router.PATCH(route.Pattern, route.HandlerFunc)
+			case http.MethodDelete:
+				router.DELETE(route.Pattern, route.HandlerFunc)
+			}
 		}
 	}
 
@@ -63,38 +71,50 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 		{
 			"LoginPost",
 			http.MethodPost,
-			"/login",
+			"/Login",
 			handleFunctions.DefaultAPI.Login,
 		},
 		{
 			"RefreshTokenPost",
 			http.MethodPost,
-			"/refresh-token",
+			"/RefreshToken",
 			handleFunctions.DefaultAPI.RefreshToken,
 		},
 		{
 			"RegisterPost",
 			http.MethodPost,
-			"/register",
+			"/Register",
 			handleFunctions.DefaultAPI.Register,
 		},
 		{
 			"ChangePasswordPost",
 			http.MethodPost,
-			"/change-password",
+			"/ChangePassword",
 			handleFunctions.DefaultAPI.ChangePassword,
 		},
 		{
 			"ResetPasswordPost",
 			http.MethodPost,
-			"/reset-password",
+			"/ResetPassword",
 			handleFunctions.DefaultAPI.ResetPassword,
 		},
 		{
 			"VerefyResetCodePost",
 			http.MethodPost,
-			"/verefy-reset-code",
+			"/VerefyResetCode",
 			handleFunctions.DefaultAPI.VerefyRecetCode,
+		},
+		{
+			"GetAllRolesGet",
+			http.MethodGet,
+			"/GetAllRoles",
+			handleFunctions.DefaultAPI.GetAllRoles,
+		},
+		{
+			"ValidAccessToken",
+			http.MethodPost,
+			"/ValidAccessToken",
+			handleFunctions.DefaultAPI.GetAllRoles,
 		},
 	}
 }

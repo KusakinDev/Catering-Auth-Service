@@ -1,30 +1,23 @@
-package resetpasswordcode
+package resetpasswordmodel
 
 import (
 	"crypto/rand"
 	"math/big"
 	"time"
 
-	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/user"
+	"github.com/KusakinDev/Catering-Auth-Service/internal/database"
+	account "github.com/KusakinDev/Catering-Auth-Service/internal/models/account_model"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
-type DBInterface interface {
-	Create(value interface{}) error
-	First(out interface{}, where ...interface{}) error
-	Save(value interface{}) error
-	Find(out interface{}, where ...interface{}) error
-	Delete(value interface{}, where ...interface{}) error
-}
-
 type ResetCode struct {
-	Id        int                     `gorm:"primaryKey;autoIncrement"`
-	Id_user   int                     `gorm:"not null"`
-	Code      int                     `gorm:"not null;type:integer"`
-	StartTime string                  `gorm:"type:varchar(50)"`
-	ExpTime   string                  `gorm:"type:varchar(50)"`
-	User      useraccount.UserAccount `gorm:"foreignKey:Id_user;references:Id;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Id        int                 `gorm:"primaryKey;autoIncrement"`
+	Id_user   int                 `gorm:"not null"`
+	Code      int                 `gorm:"not null;type:integer"`
+	StartTime string              `gorm:"type:varchar(50)"`
+	ExpTime   string              `gorm:"type:varchar(50)"`
+	User      account.UserAccount `gorm:"foreignKey:Id_user;references:Id;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 // Decode struct from json gin context
@@ -64,40 +57,60 @@ func (resetForm *ResetCode) InitDate(duration int) {
 }
 
 // Create new row in code
-func (resetForm *ResetCode) AddToTable(db DBInterface) int {
+func (resetForm *ResetCode) AddToTable() int {
+	var db database.DataBase
+	db.InitDB()
+
 	resetForm.Code = int(resetForm.Code)
-	err := db.Create(&resetForm)
+	err := db.Connection.Create(&resetForm).Error
 	if err != nil {
+		db.CloseDB()
 		return 503
 	}
+	db.CloseDB()
 	return 0
 }
 
 // Get coderecord from table by code
-func (resetForm *ResetCode) GetFromTableByCode(db DBInterface) error {
-	err := db.First(&resetForm, "code = ?", int(resetForm.Code))
+func (resetForm *ResetCode) GetFromTableByCode() error {
+	var db database.DataBase
+	db.InitDB()
+
+	err := db.Connection.First(&resetForm, "code = ?", int(resetForm.Code)).Error
 	if err != nil {
+		db.CloseDB()
 		return err
 	}
+	db.CloseDB()
 	return nil
 }
 
 // Get coderecord from table by user id
-func (resetForm *ResetCode) GetFromTableByUserId(db DBInterface) error {
-	err := db.First(&resetForm, "id_user = ?", resetForm.Id_user)
+func (resetForm *ResetCode) GetFromTableByUserId() error {
+	var db database.DataBase
+	db.InitDB()
+
+	err := db.Connection.First(&resetForm, "user_id = ?", resetForm.Id_user).Error
 	if err != nil {
+		db.CloseDB()
 		return err
 	}
+	db.CloseDB()
 	return nil
 }
 
 // Remove coderecord from table by code
-func (resetForm *ResetCode) DeleteFromTableByCode(db DBInterface) error {
-	err := db.Delete(&resetForm, "code = ?", resetForm.Code)
+func (resetForm *ResetCode) DeleteFromTableByCode() error {
+	var db database.DataBase
+	db.InitDB()
+
+	err := db.Connection.Delete(&resetForm, "code = ?", resetForm.Code).Error
 	if err != nil {
+		db.CloseDB()
 		logrus.Error("Error deleting reset code: ", err)
 		return err
 	}
+	db.CloseDB()
 	return nil
 }
 
@@ -108,4 +121,14 @@ func (resetForm *ResetCode) ValideCode() (int, string) {
 		return 403, "Code is not valide"
 	}
 	return 200, ""
+}
+
+func (resetForm *ResetCode) MigrateToDB(db database.DataBase) error {
+	err := db.Connection.AutoMigrate(&ResetCode{})
+	if err != nil {
+		logrus.Errorln("Error migrate ResetCode model :")
+		return err
+	}
+	logrus.Infoln("Success migrate ResetCode model :")
+	return nil
 }

@@ -2,9 +2,8 @@ package database
 
 import (
 	"log"
+	"os"
 
-	resetpasswordcode "github.com/KusakinDev/Catering-Auth-Service/internal/models/reset_password_code"
-	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/user"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -15,7 +14,7 @@ type DataBase struct {
 
 func (database *DataBase) InitDB() error {
 	var err error
-	dsn := "host=localhost user=postgres password=5121508 dbname=catering_auth_db port=5432 sslmode=disable"
+	dsn := os.Getenv("DATABASE_URL")
 	database.Connection, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Println("Error open DB connection: ", err)
@@ -32,29 +31,4 @@ func (database *DataBase) CloseDB() error {
 	}
 	sqlDB.Close()
 	return nil
-}
-
-func (database *DataBase) Migration() {
-	database.Connection.AutoMigrate(&useraccount.UserAccount{})
-	database.Connection.AutoMigrate(&resetpasswordcode.ResetCode{})
-}
-
-func (db *DataBase) Create(value interface{}) error {
-	return db.Connection.Create(value).Error
-}
-
-func (db *DataBase) First(out interface{}, where ...interface{}) error {
-	return db.Connection.First(out, where...).Error
-}
-
-func (db *DataBase) Save(value interface{}) error {
-	return db.Connection.Save(value).Error
-}
-
-func (db *DataBase) Find(out interface{}, where ...interface{}) error {
-	return db.Connection.Find(out, where...).Error
-}
-
-func (db *DataBase) Delete(value interface{}, where ...interface{}) error {
-	return db.Connection.Delete(value, where...).Error
 }

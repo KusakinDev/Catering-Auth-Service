@@ -3,7 +3,7 @@ package refreshtoken
 import (
 	jwtconfig "github.com/KusakinDev/Catering-Auth-Service/internal/config/jwt"
 
-	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/user"
+	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/account_model"
 	jwtt "github.com/KusakinDev/Catering-Auth-Service/internal/utils/jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"

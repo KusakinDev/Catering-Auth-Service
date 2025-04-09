@@ -14,7 +14,7 @@ func GenerateRefreshToken(user useraccount.UserAccount) (int, string, string) {
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":   user.Id,
 		"exp":  time.Now().Add(time.Hour * 24 * 7).Unix(), //7 days
-		"role": user.Role.Role,
+		"role": user.Role,
 	})
 	refreshTokenString, err := refreshToken.SignedString(jwtconfig.JWT_KEY)
 	if err != nil {

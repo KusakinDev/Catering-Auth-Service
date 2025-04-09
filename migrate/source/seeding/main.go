@@ -11,19 +11,12 @@ func main() {
 	db.InitDB()
 
 	sqlStatements := []string{
-		`INSERT INTO roles (role, role_string) VALUES
-        ('adm', 'Администратор'),
-        ('mng', 'Менеджер'),
-        ('wtr', 'Официант'),
-        ('ktn', 'Кухня'),
-        ('bar', 'Бар');`,
-
-		`INSERT INTO user_accounts (id, email, password, role_id) VALUES
-        (1, 'user1@example.com', 'password123', 1),
-        (2, 'mod1@example.com', 'password123', 2),
-        (3, 'admin1@example.com', 'password123', 3),
-        (4, 'user2@example.com', 'password456', 4),
-        (5, 'mod2@example.com', 'password456', 5);`,
+		`INSERT INTO user_accounts (email, password, role) VALUES
+        ('user1@example.com', 'password123', 'adm'),
+        ('mod1@example.com', 'password123', 'mng'),
+        ('admin1@example.com', 'password123', 'wtr'),
+        ('user2@example.com', 'password456', 'ktn'),
+        ('mod2@example.com', 'password456', 'bar');`,
 	}
 
 	for _, stmt := range sqlStatements {

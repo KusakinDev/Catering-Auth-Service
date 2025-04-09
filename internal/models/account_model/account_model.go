@@ -5,18 +5,26 @@ import (
 	"encoding/hex"
 
 	"github.com/KusakinDev/Catering-Auth-Service/internal/database"
-	rolemodel "github.com/KusakinDev/Catering-Auth-Service/internal/models/role_model"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
-type UserAccount struct {
-	Id       int    `gorm:"primaryKey;autoIncrement"`
-	Email    string `gorm:"type:varchar(50)"`
-	Password string `gorm:"type:varchar(100)"`
-	RoleId   int    `json:"role_id" gorm:"not null"`
+type RoleEnum string
 
-	Role rolemodel.Role `gorm:"foreignKey:RoleId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+const (
+	ADM RoleEnum = "adm"
+	MNG RoleEnum = "mng"
+	WTR RoleEnum = "wtr"
+	KTN RoleEnum = "ktn"
+	BAR RoleEnum = "bar"
+	TBL RoleEnum = "tbl"
+)
+
+type UserAccount struct {
+	Id       int      `gorm:"primaryKey;autoIncrement"`
+	Email    string   `gorm:"type:varchar(50)"`
+	Password string   `gorm:"type:varchar(100)"`
+	Role     RoleEnum `gorm:"type:varchar(5)"`
 }
 
 // Set password as hash

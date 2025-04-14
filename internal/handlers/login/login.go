@@ -17,7 +17,7 @@ func LoginHandle(c *gin.Context) (int, string, string, string) {
 
 	userDB.Email = userFront.Email
 
-	err := userDB.GetFromTable()
+	err := userDB.GetFromTableByEmail()
 	if err != nil {
 		logger.Errorln("Incorrect login")
 		return 403, "", "", "Incorrect login or password"

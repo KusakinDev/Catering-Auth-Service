@@ -2,9 +2,8 @@ package api
 
 import (
 	changepassword "github.com/KusakinDev/Catering-Auth-Service/internal/handlers/change_password"
-	getallroles "github.com/KusakinDev/Catering-Auth-Service/internal/handlers/get_all_roles"
 	"github.com/KusakinDev/Catering-Auth-Service/internal/handlers/login"
-	refreshtoken "github.com/KusakinDev/Catering-Auth-Service/internal/handlers/refreshToken"
+	refreshtoken "github.com/KusakinDev/Catering-Auth-Service/internal/handlers/refresh_token"
 	"github.com/KusakinDev/Catering-Auth-Service/internal/handlers/registration"
 	resetpassword "github.com/KusakinDev/Catering-Auth-Service/internal/handlers/reset_password"
 	validaccesstoken "github.com/KusakinDev/Catering-Auth-Service/internal/handlers/valid_access_token"
@@ -67,13 +66,6 @@ func (api *DefaultAPI) VerefyRecetCode(c *gin.Context) {
 	code, accessToken, refreshToken, message := verefyresetcode.VerefyResetCodeHandle(c)
 
 	c.JSON(code, gin.H{"accessToken": accessToken, "refreshToken": refreshToken, "message": message})
-}
-
-func (api *DefaultAPI) GetAllRoles(c *gin.Context) {
-
-	code, roles := getallroles.GetAllRoles(c)
-
-	c.JSON(code, roles)
 }
 
 func (api *DefaultAPI) ValidAccessToken(c *gin.Context) {

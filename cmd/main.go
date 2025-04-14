@@ -11,18 +11,52 @@ package main
 
 import (
 	"log"
+	"net"
+	"os"
 
 	loggerconfig "github.com/KusakinDev/Catering-Auth-Service/internal/config/logger"
 	routespkg "github.com/KusakinDev/Catering-Auth-Service/internal/routes"
+	validaccesstokenfunc "github.com/KusakinDev/Catering-Auth-Service/internal/services/valid_access_token/valid_access_token_func"
+	pb "github.com/KusakinDev/Catering-Auth-Service/internal/services/valid_access_token/valid_access_token_gen"
+	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
 )
 
 func main() {
 	loggerconfig.Init()
-	routes := routespkg.ApiHandleFunctions{}
 
-	log.Printf("Server started")
+	err := godotenv.Load()
+	if err != nil {
+		logrus.Fatalf("Error load .env: %v", err)
+	}
 
-	router := routespkg.NewRouter(routes)
+	restPost := os.Getenv("REST_PORT")
+	gRPCport := os.Getenv("GRPC_PORT")
 
-	log.Fatal(router.Run(":8080"))
+	go func() {
+		routes := routespkg.ApiHandleFunctions{}
+		logrus.Println("Server started")
+		router := routespkg.NewRouter(routes)
+		log.Fatal(router.Run(":" + restPost))
+	}()
+
+	go func() {
+		listener, err := net.Listen("tcp", ":"+gRPCport)
+		if err != nil {
+			log.Fatalf("Failed to listen: %v", err)
+		}
+
+		grpcServer := grpc.NewServer()
+
+		pb.RegisterValidAccessTokenServiceServer(grpcServer, &validaccesstokenfunc.Server{})
+
+		logrus.Println("gRPC server is running on port :" + gRPCport)
+		if err := grpcServer.Serve(listener); err != nil {
+			log.Fatalf("Failed to serve gRPC server: %v", err)
+		}
+	}()
+
+	select {}
+
 }

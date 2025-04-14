@@ -5,11 +5,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile_db
-    image: postgres:15
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 5121508
-      POSTGRES_DB: catering_auth_db
+    image: postgres:17
     ports:
       - "5432:5432"
     volumes:
@@ -21,8 +17,10 @@ services:
       dockerfile: docker/Dockerfile_migration
     depends_on:
       - db
-    environment:
-      DATABASE_URL: "host=db user=postgres password=5121508 dbname=catering_auth_db port=5432 sslmode=disable" 
+    env_file:
+      - dev.env
+    entrypoint: ["./wait-for-it.sh", "db:5432", "--"] 
+    command: ["./main"]
 
   auth_service:
     build:
@@ -30,12 +28,12 @@ services:
       dockerfile: docker/Dockerfile_service
     depends_on:
       - db
-    environment:
-      DATABASE_URL: "host=db user=postgres password=5121508 dbname=catering_auth_db port=5432 sslmode=disable" 
+    env_file:
+      - dev.env
     ports:
       - "8080:8080"
-
-
-
+      - "50051:50051"
+    entrypoint: ["./wait-for-it.sh", "db:5432", "--"] 
+    command: ["./main"]
 volumes:
   pgdata:

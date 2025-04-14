@@ -13,7 +13,7 @@ import (
 
 type ResetCode struct {
 	Id        int                 `gorm:"primaryKey;autoIncrement"`
-	Id_user   int                 `gorm:"not null"`
+	UserId    int                 `gorm:"not null"`
 	Code      int                 `gorm:"not null;type:integer"`
 	StartTime string              `gorm:"type:varchar(50)"`
 	ExpTime   string              `gorm:"type:varchar(50)"`
@@ -90,7 +90,7 @@ func (resetForm *ResetCode) GetFromTableByUserId() error {
 	var db database.DataBase
 	db.InitDB()
 
-	err := db.Connection.First(&resetForm, "user_id = ?", resetForm.Id_user).Error
+	err := db.Connection.First(&resetForm, "user_id = ?", resetForm.UserId).Error
 	if err != nil {
 		db.CloseDB()
 		return err

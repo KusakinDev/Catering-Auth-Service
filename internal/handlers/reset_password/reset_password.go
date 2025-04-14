@@ -3,7 +3,7 @@ package resetpassword
 import (
 	useraccount "github.com/KusakinDev/Catering-Auth-Service/internal/models/account_model"
 	resetpasswordcode "github.com/KusakinDev/Catering-Auth-Service/internal/models/reset_password_model"
-	"github.com/KusakinDev/Catering-Auth-Service/internal/utils/email"
+	notificationservice "github.com/KusakinDev/Catering-Auth-Service/internal/services/notification_service/notificaton_service_client"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -14,6 +14,8 @@ func ResetPasswordHandle(c *gin.Context) (int, string) {
 	var userFront useraccount.UserAccount
 	var userDB useraccount.UserAccount
 	var err error
+	var code int
+	var message string
 
 	userFront.DecodeFromContext(c)
 	userDB.Email = userFront.Email
@@ -34,9 +36,9 @@ func ResetPasswordHandle(c *gin.Context) (int, string) {
 	resetForm.GenerateCode()
 	resetForm.InitDate(5)
 
-	err = email.SendEmail(userDB.Email, userDB.Email, resetForm.Code)
-	if err != nil {
-		return 503, "Error send email"
+	code, message = notificationservice.ResetNotif(resetForm, userDB.Email)
+	if code != 200 {
+		return code, message
 	}
 
 	resetForm.User = userDB

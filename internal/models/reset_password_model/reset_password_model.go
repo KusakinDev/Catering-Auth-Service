@@ -17,7 +17,7 @@ type ResetCode struct {
 	Code      int                 `gorm:"not null;type:integer"`
 	StartTime string              `gorm:"type:varchar(50)"`
 	ExpTime   string              `gorm:"type:varchar(50)"`
-	User      account.UserAccount `gorm:"foreignKey:Id_user;references:Id;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	User      account.UserAccount `gorm:"foreignKey:UserId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 // Decode struct from json gin context

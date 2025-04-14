@@ -105,16 +105,10 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			handleFunctions.DefaultAPI.VerefyRecetCode,
 		},
 		{
-			"GetAllRolesGet",
-			http.MethodGet,
-			"/GetAllRoles",
-			handleFunctions.DefaultAPI.GetAllRoles,
-		},
-		{
 			"ValidAccessToken",
 			http.MethodPost,
 			"/ValidAccessToken",
-			handleFunctions.DefaultAPI.GetAllRoles,
+			handleFunctions.DefaultAPI.ValidAccessToken,
 		},
 	}
 }

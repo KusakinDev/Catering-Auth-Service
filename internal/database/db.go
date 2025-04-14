@@ -16,7 +16,7 @@ type DataBase struct {
 
 func (database *DataBase) InitDB() error {
 	var err error
-	err = godotenv.Load()
+	err = godotenv.Load("dev.env")
 	if err != nil {
 		log.Fatalf("Error load .env: %v", err)
 	}

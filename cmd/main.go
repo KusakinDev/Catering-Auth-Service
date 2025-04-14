@@ -26,7 +26,7 @@ import (
 func main() {
 	loggerconfig.Init()
 
-	err := godotenv.Load()
+	err := godotenv.Load("dev.env")
 	if err != nil {
 		logrus.Fatalf("Error load .env: %v", err)
 	}

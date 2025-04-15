@@ -1,9 +1,7 @@
 FROM postgres:17
 
-# Задаем переменные окружения для настройки Postgres
 ENV POSTGRES_USER=postgres
 ENV POSTGRES_PASSWORD=5121508
 ENV POSTGRES_DB=catering_auth_db
 
-# Указываем порт для PostgreSQL
 EXPOSE 5432

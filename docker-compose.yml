@@ -9,25 +9,39 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata_db_auth:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - shared_network
+      - my_bridge_network
 
   migration:
     build:
       context: .
       dockerfile: docker/Dockerfile_migration
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file:
       - dev.env
     entrypoint: ["./wait-for-it.sh", "db:5432", "--"] 
     command: ["./main"]
+    networks:
+      - shared_network
+      - my_bridge_network
 
   auth_service:
     build:
       context: .
       dockerfile: docker/Dockerfile_service
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file:
       - dev.env
     ports:
@@ -35,5 +49,15 @@ services:
       - "50051:50051"
     entrypoint: ["./wait-for-it.sh", "db:5432", "--"] 
     command: ["./main"]
+    networks:
+      - shared_network
+      - my_bridge_network
+
 volumes:
-  pgdata:
+  pgdata_db_auth:
+
+networks:
+  shared_network:
+    external: true
+  my_bridge_network:
+    driver: bridge
